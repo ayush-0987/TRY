@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+import sys
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,11 +26,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-$ya9ri-^i9)r*pm)@flz)!@u_176wct!h3=hmnh_w%8)+nk@m%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "False") == "True"
+# DEBUG = "True"
 
-ALLOWED_HOSTS = []
-
-
+ALLOWED_HOSTS = ['*']
+DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
 # Application definition
 
 INSTALLED_APPS = [
@@ -85,16 +87,31 @@ WSGI_APPLICATION = 'try.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'try2',
-        'USER':'root',
-        'PASSWORD':'1234',
-        'HOST':'localhost',
-        'PORT':'3306'
+if DEVELOPMENT_MODE is True:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        }
     }
-}
+elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
+    if os.getenv("DATABASE_URL", None) is None:
+        raise Exception("DATABASE_URL environment variable not defined")
+    DATABASES = {
+        "default": dj_database_url.parse(os.environ.get("DATABASE_URL")),
+    }
+ 
+else:
+    DATABASES = {   
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'rwa',
+            'USER': 'root',
+            'PASSWORD': '1234',
+            'HOST': 'localhost',
+            'PORT': '3306',
+        }
+    }
 
 
 # Password validation
