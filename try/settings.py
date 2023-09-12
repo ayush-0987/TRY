@@ -60,7 +60,7 @@ REST_FRAMEWORK = {
       ],
 }
 
-ROOT_URLCONF = 'try1.urls'
+ROOT_URLCONF = 'try.urls'
 
 TEMPLATES = [
     {
@@ -78,7 +78,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'try1.wsgi.application'
+WSGI_APPLICATION = 'try.wsgi.application'
 
 
 # Database
