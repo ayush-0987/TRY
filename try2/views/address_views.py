@@ -17,8 +17,6 @@ def user_address(request):
                 basic = AddressBasic.objects.filter(id = data_dict['basic_id']).first(),
                 floor = data_dict['floor'],
                 block = data_dict['block'],
-
-
                 # area=data_dict['area'],
                 # state=data_dict['state'],
                 # pincode=data_dict['pin'],

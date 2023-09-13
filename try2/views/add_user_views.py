@@ -4,8 +4,26 @@ from rest_framework import status
 from try2.models import Address, Person
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
+from try2.serializers import PersonSerializer
 import json
 
+
+def get_all(request):
+    user = Person.objects.all()
+    serializer = PersonSerializer(user, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def get_specified_user(request, pk):
+    try:    
+        user = Person.objects.get(id = pk)
+        serializer = PersonSerializer(user, many = False)
+        message = {'Info':'User details fetched successfully', 'data':serializer.data}
+        return Response(message, status=status.HTTP_200_OK)
+    except:
+        message = {'error':'User not found or user not registered'}
+        return Response(message, status=status.HTTP_303_SEE_OTHER)
+    
 @api_view(['POST'])
 def user_data(request):
     data = request.body
@@ -48,3 +66,17 @@ def user_data(request):
         message = {"error":str(e)}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['POST'])
+def login(request):
+    data = request.body 
+    data_str = data.decode('utf-8')
+    data_dict = json.loads(data_str)
+
+    email = data_dict.get('email')
+    password = data_dict.get('password')
+
+    person = Person.objects.get(email= email)
+
+    try:
+        user = User.objects.get(email = email)
+        
