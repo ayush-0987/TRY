@@ -5,6 +5,7 @@ from try2.models import Address, Person
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from try2.serializers import PersonSerializer
+from django.http import HttpResponse
 import json
 
 
@@ -79,4 +80,13 @@ def login(request):
 
     try:
         user = User.objects.get(email = email)
+        if not user.check_password(password):
+            return Response({"error":"Invalid Credentials: User ID or Password may be incorrect"}, status= status.HTTP_401_UNAUTHORIZED)
         
+    except User.DoesNotExist:
+        return Response({"error":"User not found"}, status= status.HTTP_404_NOT_FOUND)
+    
+    except Exception as e:
+        return Response({'error':str(e)})
+    
+    return Response({"message": "Login successful"}, status=status.HTTP_200_OK)
