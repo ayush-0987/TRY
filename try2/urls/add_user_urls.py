@@ -6,4 +6,6 @@ urlpatterns = [
     path('<str:pk>', views.get_specified_user, name ='get_specified_user'),
     path('add/', views.user_data, name = 'add_user'),
     path('login/',views.login, name='login'),
+    path('reset/', views.reset, name='reset_password'),
+    
 ]

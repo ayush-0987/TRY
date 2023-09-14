@@ -5,7 +5,6 @@ from try2.models import Address, Person
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from try2.serializers import PersonSerializer
-from django.http import HttpResponse
 import json
 
 
@@ -84,9 +83,35 @@ def login(request):
             return Response({"error":"Invalid Credentials: User ID or Password may be incorrect"}, status= status.HTTP_401_UNAUTHORIZED)
         
     except User.DoesNotExist:
-        return Response({"error":"User not found"}, status= status.HTTP_404_NOT_FOUND)
+        return Response({'error':'User with the said email does not exists'}, status=status.HTTP_404_NOT_FOUND)
     
     except Exception as e:
         return Response({'error':str(e)})
     
     return Response({"message": "Login successful"}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def reset(request):
+    try:
+            
+        data = request.body
+        data_str = data.decode('utf-8')
+        data_dict = json.loads(data_str)
+
+        email = data_dict.get('email')
+        password = data_dict.get('password')
+        confirm_password = data_dict.get('cnfpassword')
+
+        if password != confirm_password:
+            return Response({'error':'New password and Confirmation password doesnot match'},status=status.HTTP_406_NOT_ACCEPTABLE)
+
+
+        user = User.objects.get(email = email)
+        user.set_password(password)
+        user.save()
+
+        return Response({'message':'Password Reset Successful'}, status=status.HTTP_201_CREATED)
+    
+    except User.DoesNotExist:
+        return Response({'error':'User with the said email does not exists'}, status=status.HTTP_404_NOT_FOUND)
+    
