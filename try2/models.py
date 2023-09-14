@@ -68,7 +68,7 @@ class Payment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     id = models.AutoField(primary_key=True)
     paid_using = models.CharField(max_length=10, choices=paid_using_choices, default='')
-    account_no = models.IntegerField(null=True, blank=True)
+    account_no = models.BigIntegerField(null=True, blank=True)
     bank_name = models.CharField(max_length=19, null=True, blank= True)
     payment_date = models.DateTimeField(auto_now=True, null=False, blank=True)
     amount = models.DecimalField(max_digits=20, decimal_places=2)
