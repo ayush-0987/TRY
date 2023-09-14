@@ -25,4 +25,5 @@ urlpatterns = [
     path('api/family/', include('try2.urls.family_urls')),
     path('api/info/', include('try2.urls.add_user_urls')),
     path('api/address/', include('try2.urls.address_urls')),
+    path('api/cart/', include('try2.urls.cart_urls'))
 ]
