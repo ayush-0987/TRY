@@ -47,17 +47,18 @@ class Family_details(models.Model):
 class Cart(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(Person, on_delete=models.CASCADE, null=False,blank=False)
-    details = models.CharField(max_length=12)
+    name = models.CharField(max_length=12)
     quantity = models.PositiveIntegerField(default=1)
     price = models.DecimalField(max_digits=20,decimal_places=2)
     
 class Order(models.Model):
     id = models.UUIDField(primary_key=True,default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
     item_details = models.CharField(max_length=100)
     price = models.OneToOneField(Cart, on_delete=models.CASCADE)
     done_payment = models.BooleanField()
-
+    
 class Payment(models.Model):
     paid_using_choices = [
     ('cash', 'Cash'),

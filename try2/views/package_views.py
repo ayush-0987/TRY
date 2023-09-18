@@ -34,7 +34,7 @@ def add_package(request):
         if 'details' not in data_dict:
             return Response({'error': 'Details field is required'}, status=status.HTTP_400_BAD_REQUEST)
         
-        name = data_dict.get('name'),
+        name = data_dict.get('name')
 
         package = Package.objects.filter(name = name).first()
         if package :

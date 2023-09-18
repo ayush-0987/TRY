@@ -27,4 +27,5 @@ urlpatterns = [
     path('api/address/', include('try2.urls.address_urls')),
     path('api/cart/', include('try2.urls.cart_urls')),
     path('api/package/', include('try2.urls.package_urls')),
+    path('api/order/',include('try2.urls.order_urls')),
 ]

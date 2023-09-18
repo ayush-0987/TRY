@@ -5,6 +5,7 @@ from try2.models import Cart
 from try2.serializers import CartSerializer
 import json
 from django.contrib.auth.models import User
+from try2.models import Package,Person
 
 @api_view(['GET'])
 def get_all(request):
@@ -30,14 +31,34 @@ def cart_items(request):
     data_str = data.decode('utf-8')
     data_dict = json.loads(data_str)
 
-    email = data_dict.get['email']
+    email = data_dict.get('email')
 
-    user = User.objects.filter(email=email).first()
+    user = Person.objects.filter(email=email).first()
+    
+    name = data_dict.get('name')
+    package = Package.objects.filter(name = name).first()
+    print(data_dict)
+
+    if not package:
+        return Response({'error':'Package not found'}, status= status.HTTP_204_NO_CONTENT)
+    
+    price = package.price
 
     cart_item = Cart.objects.create(
-        details = data_dict.get['package'],
-        quantity = data_dict.get['quantity'],
-        price = data_dict.get['price'],
+        user = user,
+        name = name,
+        quantity = data_dict.get('quantity'),
+        price = price,
     )
     cart_item.save()
     return Response({'message':'Items added to cart successfully'},status= status.HTTP_200_OK)
+
+@api_view(['DELETE'])
+def remove_item(request, id):
+    try:
+        cart = Cart.objects.filter(id=id)
+        cart.delete()
+        return Response({"message":"Item from cart removed Successfully"}, status= status.HTTP_200_OK)
+    
+    except Cart.DoesNotExist:        
+        return Response({"error":"Item cannot be deleted"}, status=status.HTTP_204_NO_CONTENT)
