@@ -4,6 +4,23 @@ from rest_framework import status
 import json
 from try2.models import Order
 from django.contrib.auth.models import User 
+from try2.serializers import OrderSerializer
+
+@api_view(['GET'])
+def get_all(request):
+    order = Order.objects.all()
+    serializer = OrderSerializer(order, many=True)
+    return Response ({'message':'Details of all the orders done till now'}, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def get_details_of_user(request,pk):
+    try:            
+        order = Order.objects.filter(user = pk)
+        serializer = OrderSerializer(order,many = True)
+        return Response({'message':'order details of the user are'},status=status.HTTP_302_FOUND)
+    
+    except:
+        return Response({'error':'User not found or order details cannot be fetched'},status=status.HTTP_303_SEE_OTHER)
 
 @api_view(['POST'])
 def order_details(request):
@@ -26,6 +43,5 @@ def order_details(request):
         price = price,
         done_payment = data_dict.get('payment')
     )
-
     order_detail.save()
     return Response({'message':'Order successful'},status=status.HTTP_200_OK)
